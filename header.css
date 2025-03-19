@@ -136,8 +136,8 @@ nav ul li a.active::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px; /* Збільшуємо розмір */
-    height: 50px; /* Збільшуємо розмір */
+    width: 50px; /* Розмір кнопки */
+    height: 50px; /* Розмір кнопки */
     color: white;
     text-decoration: none;
     border-radius: 50%;
@@ -152,7 +152,7 @@ nav ul li a.active::after {
     transform: scale(1.1);
 }
 
-/* Кольори для кожної іконки */
+/* Кольори для кожної іконки при наведенні */
 .social-link1:hover {
     background: #f09433;
     background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
@@ -161,15 +161,26 @@ nav ul li a.active::after {
 }
 
 .social-link2:hover {
-    background-color: #1877f2; /* Facebook blue */
+    background: #1877f2;
+    background: -moz-linear-gradient(45deg, #1877f2 0%, #1e90ff 50%, #00bfff 100%);
+    background: -webkit-linear-gradient(45deg, #1877f2 0%, #1e90ff 50%, #00bfff 100%);
+    background: linear-gradient(45deg, #1877f2 0%, #1e90ff 50%, #00bfff 100%);
 }
 
+/* Градієнт для TikTok */
 .social-link3:hover {
-    background-color: #000000; /* TikTok black */
+    background: #000000;
+    background: -moz-linear-gradient(45deg, #000000 0%, #ff0050 50%, #ff0000 100%);
+    background: -webkit-linear-gradient(45deg, #000000 0%, #ff0050 50%, #ff0000 100%);
+    background: linear-gradient(45deg, #000000 0%, #ff0050 50%, #ff0000 100%);
 }
 
+/* Градієнт для Telegram */
 .social-link4:hover {
-    background-color: #0088cc; /* Telegram blue */
+    background: #0088cc;
+    background: -moz-linear-gradient(45deg, #0088cc 0%, #00aced 50%, #00bfff 100%);
+    background: -webkit-linear-gradient(45deg, #0088cc 0%, #00aced 50%, #00bfff 100%);
+    background: linear-gradient(45deg, #0088cc 0%, #00aced 50%, #00bfff 100%);
 }
 
 /* Нова анімація: хвиля */
@@ -208,27 +219,32 @@ nav ul li a.active::after {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Стилі для SVG-іконок */
-.social-icons svg {
-    width: 20px; /* Ширина */
-    height: 20px; /* Висота */
-    fill: currentColor; /* Колір заповнення */
-    color: white; /* Колір іконки */
+/* Стилі для зображень іконок */
+.social-icons img {
+    width: 25px; /* Розмір іконки */
+    height: 25px; /* Розмір іконки */
+    filter: brightness(0) invert(1); /* Зробити іконки білими */
+    transition: filter 0.3s ease; /* Плавна зміна фільтра */
+}
+.social-link1 img {
+    width: 40px; /* Розмір іконки */
+    height: 40px; /* Розмір іконки */
+}
+.social-link2 img {
+    width: 35px; /* Розмір іконки */
+    height: 35px; /* Розмір іконки */
 }
 
-/* Стилі для конкретних іконок */
-.social-link1 svg {
-    color: white; /* Колір для Instagram */
+/* Зміна кольору іконок при наведенні (опціонально) */
+.social-link1:hover img {
+    filter: brightness(1) invert(0); /* Повернути оригінальний колір для Instagram */
 }
 
-.social-link2 svg {
-    color: white; /* Колір для Facebook */
+.social-link2:hover img {
+    filter: brightness(1) invert(0); /* Повернути оригінальний колір для Facebook */
 }
 
-.social-link3 svg {
-    color: white; /* Колір для TikTok */
-}
 
-.social-link4 svg {
-    color: white; /* Колір для Telegram */
+.social-link4:hover img {
+    filter: brightness(1) invert(0); /* Повернути оригінальний колір для Telegram */
 }
