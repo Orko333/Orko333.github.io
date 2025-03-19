@@ -176,3 +176,21 @@
 .course-card:hover::before {
     opacity: 1; /* Показуємо градієнт при наведенні */
 }
+
+.cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #000000;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    position: relative;
+    z-index: 10;
+}
+
+.cta-button:hover {
+    background-color: #ff0000;
+}

@@ -121,3 +121,114 @@ nav ul li a.active::after {
     transform: scaleX(1);
     background-color: #ff0000;
 }
+/* Стилі для іконок соціальних мереж */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    position: absolute;
+    right: 20px;
+    top: 15%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Збільшуємо розмір */
+    height: 50px; /* Збільшуємо розмір */
+    color: white;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Тінь для кращого вигляду */
+    position: relative;
+    overflow: hidden; /* Щоб хвиля не виходила за межі */
+}
+
+.social-icons a:hover {
+    transform: scale(1.1);
+}
+
+/* Кольори для кожної іконки */
+.social-link1:hover {
+    background: #f09433;
+    background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-link2:hover {
+    background-color: #1877f2; /* Facebook blue */
+}
+
+.social-link3:hover {
+    background-color: #000000; /* TikTok black */
+}
+
+.social-link4:hover {
+    background-color: #0088cc; /* Telegram blue */
+}
+
+/* Нова анімація: хвиля */
+@keyframes wave {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Ефект хвилі при наведенні */
+.social-icons a:hover::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: wave 0.8s ease-out;
+    z-index: 1;
+}
+
+/* Додатковий ефект тіні при наведенні */
+.social-icons a:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Стилі для SVG-іконок */
+.social-icons svg {
+    width: 20px; /* Ширина */
+    height: 20px; /* Висота */
+    fill: currentColor; /* Колір заповнення */
+    color: white; /* Колір іконки */
+}
+
+/* Стилі для конкретних іконок */
+.social-link1 svg {
+    color: white; /* Колір для Instagram */
+}
+
+.social-link2 svg {
+    color: white; /* Колір для Facebook */
+}
+
+.social-link3 svg {
+    color: white; /* Колір для TikTok */
+}
+
+.social-link4 svg {
+    color: white; /* Колір для Telegram */
+}
