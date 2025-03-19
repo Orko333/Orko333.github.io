@@ -1,0 +1,254 @@
+/* Стилі для секції "Про Нас" */
+.section-about-us {
+    padding: 20px 0;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.section-about-us h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.section-about-us p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    max-height: 100px;
+}
+
+/* Стилі для секції "Наші найкращі учні" */
+.section-top-students {
+    padding: 60px 0;
+    background-color: #f9f9f9; /* Світлий фон для всієї секції */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-top-students h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+    color: #000000; /* Чорний колір тексту */
+    position: relative;
+    z-index: 2;
+}
+
+.section-top-students h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 5px;
+    background-color: #ff0000;
+    border-radius: 3px;
+    z-index: 1;
+}
+
+.student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    padding: 0 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+/* Чорний стиль для карток студентів */
+.student-card {
+    background-color: #000000; /* Чорний фон для картки */
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.student-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Збільшені фотографії */
+.student-image {
+    width: 260px; /* Збільшено розмір контейнера для зображення */
+    height: 260px; /* Збільшено розмір контейнера для зображення */
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid #0077b6; /* Синій бордер для зображення */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.student-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.student-card:hover .student-image img {
+    transform: scale(1.1);
+}
+
+.student-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #ffffff; /* Білий колір тексту */
+    position: relative;
+    z-index: 2;
+}
+
+.student-card p {
+    font-size: 1.1rem;
+    color: #e0e0e0; /* Світлий сірий колір тексту для кращої читабельності */
+    line-height: 1.6;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.student-social {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+    background-color: #1a1a1a; /* Темний фон для іконок */
+    padding: 15px;
+    border-radius: 15px;
+    margin-top: auto;
+}
+
+.student-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    color: white;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.student-social a:hover {
+    transform: scale(1.1);
+}
+
+/* Кольори для кожної іконки при наведенні */
+.student-social .social-link1:hover {
+    background: #f09433;
+    background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.student-social .social-link2:hover {
+    background: #1877f2;
+    background: -moz-linear-gradient(45deg, #1877f2 0%, #1e90ff 50%, #00bfff 100%);
+    background: -webkit-linear-gradient(45deg, #1877f2 0%, #1e90ff 50%, #00bfff 100%);
+    background: linear-gradient(45deg, #1877f2 0%, #1e90ff 50%, #00bfff 100%);
+}
+
+.student-social .social-link3:hover {
+    background: #000000;
+    background: -moz-linear-gradient(45deg, #000000 0%, #ff0050 50%, #ff0000 100%);
+    background: -webkit-linear-gradient(45deg, #000000 0%, #ff0050 50%, #ff0000 100%);
+    background: linear-gradient(45deg, #000000 0%, #ff0050 50%, #ff0000 100%);
+}
+
+.student-social .social-link4:hover {
+    background: #0088cc;
+    background: -moz-linear-gradient(45deg, #0088cc 0%, #00aced 50%, #00bfff 100%);
+    background: -webkit-linear-gradient(45deg, #0088cc 0%, #00aced 50%, #00bfff 100%);
+    background: linear-gradient(45deg, #0088cc 0%, #00aced 50%, #00bfff 100%);
+}
+
+/* Нова анімація: хвиля */
+@keyframes wave {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Ефект хвилі при наведенні */
+.student-social a:hover::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: wave 0.8s ease-out;
+    z-index: 1;
+}
+
+/* Додатковий ефект тіні при наведенні */
+.student-social a:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Стилі для зображень іконок */
+.student-social img {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease;
+}
+
+.student-social .social-link1 img {
+    width: 40px;
+    height: 40px;
+}
+
+.student-social .social-link2 img {
+    width: 35px;
+    height: 35px;
+}
+
+/* Зміна кольору іконок при наведенні */
+.student-social .social-link1:hover img {
+    filter: brightness(1) invert(0);
+}
+
+.student-social .social-link2:hover img {
+    filter: brightness(1) invert(0);
+}
+
+.student-social .social-link4:hover img {
+    filter: brightness(1) invert(0);
+}
