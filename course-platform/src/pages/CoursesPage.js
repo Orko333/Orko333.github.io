@@ -8,6 +8,8 @@ function CoursesPage() {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [inProgressCourses, setInProgressCourses] = useState([]);
     const [completedCourses, setCompletedCourses] = useState([]);
+    const [sortByDuration, setSortByDuration] = useState(false); // Стан для сортування за тривалістю
+    const [selectedCategory, setSelectedCategory] = useState('all'); // Стан для фільтрації за категорією
 
     // Дані про курси
     const courses = [
@@ -18,6 +20,7 @@ function CoursesPage() {
             instructor: "Алан Тьюринг",
             description: "Цей курс навчить вас основам програмування на Python. Ви дізнаєтеся про змінні, цикли, умовні оператори та функції.",
             syllabus: ["Введення в Python", "Змінні та типи даних", "Умовні оператори", "Цикли", "Функції"],
+            category: "Програмування",
         },
         {
             title: "Веб-розробка",
@@ -26,6 +29,7 @@ function CoursesPage() {
             instructor: "Тім Бернерс-Лі",
             description: "Цей курс охоплює основи веб-розробки, включаючи HTML, CSS та JavaScript. Ви створите свій перший веб-сайт.",
             syllabus: ["Введення в HTML", "Основи CSS", "JavaScript для початківців", "Створення адаптивних сайтів"],
+            category: "Веб-розробка",
         },
         {
             title: "Data Science",
@@ -34,6 +38,7 @@ function CoursesPage() {
             instructor: "Джон Сноу",
             description: "Цей курс навчить вас основам Data Science, включаючи роботу з даними, аналіз та візуалізацію за допомогою Python.",
             syllabus: ["Введення в Data Science", "Робота з Pandas", "Візуалізація даних", "Машинне навчання"],
+            category: "Data Science",
         },
         {
             title: "Машинне навчання",
@@ -42,6 +47,7 @@ function CoursesPage() {
             instructor: "Термінатор (T-800)",
             description: "Цей курс охоплює основи машинного навчання, включаючи алгоритми, моделі та їх застосування в реальних проектах.",
             syllabus: ["Введення в ML", "Класифікація", "Регресія", "Глибоке навчання"],
+            category: "Машинне навчання",
         },
         {
             title: "Frontend розробка",
@@ -50,6 +56,7 @@ function CoursesPage() {
             instructor: "Тоні Старк (Залізна Людина)",
             description: "Цей курс навчить вас створювати сучасні веб-інтерфейси за допомогою HTML, CSS та JavaScript, а також використовувати фреймворки, такі як React.",
             syllabus: ["Основи HTML/CSS", "JavaScript для Frontend", "React для початківців", "Робота з API"],
+            category: "Веб-розробка",
         },
         {
             title: "Backend розробка",
@@ -58,6 +65,7 @@ function CoursesPage() {
             instructor: "Нікола Тесла",
             description: "Цей курс навчить вас створювати серверну частину веб-додатків за допомогою Node.js та Express, а також працювати з базами даних.",
             syllabus: ["Введення в Node.js", "Робота з Express", "Бази даних (SQL/NoSQL)", "Розгортання додатків"],
+            category: "Веб-розробка",
         },
         {
             title: "Мобільна розробка",
@@ -66,6 +74,7 @@ function CoursesPage() {
             instructor: "Стів Джобс",
             description: "Цей курс навчить вас створювати мобільні додатки для Android та iOS за допомогою Flutter.",
             syllabus: ["Введення в Flutter", "Інтерфейси в Flutter", "Робота з API", "Публікація додатків"],
+            category: "Мобільна розробка",
         },
         {
             title: "Кібербезпека",
@@ -74,6 +83,7 @@ function CoursesPage() {
             instructor: "Ніо (з 'Матриці')",
             description: "Цей курс охоплює основи кібербезпеки, включаючи захист мереж, шифрування та аналіз загроз.",
             syllabus: ["Введення в кібербезпеку", "Захист мереж", "Шифрування даних", "Аналіз загроз"],
+            category: "Кібербезпека",
         },
         {
             title: "Ефективне управління проектами",
@@ -82,6 +92,7 @@ function CoursesPage() {
             instructor: "Авраам Лінкольн",
             description: "Цей курс навчить вас ефективно керувати проектами, використовуючи сучасні методики, такі як Agile та Scrum.",
             syllabus: ["Введення в управління проектами", "Методологія Agile", "Scrum-практики", "Управління ризиками"],
+            category: "Управління",
         },
         {
             title: "Лідерство та стратегії",
@@ -90,6 +101,7 @@ function CoursesPage() {
             instructor: "Наполеон Бонапарт",
             description: "Цей курс навчить вас стратегічному мисленню та лідерським навичкам, необхідним для керівництва великими командами та організаціями.",
             syllabus: ["Основи лідерства", "Стратегічне планування", "Управління командами", "Розв'язання конфліктів"],
+            category: "Управління",
         },
         {
             title: "Ядерна фізика",
@@ -98,9 +110,9 @@ function CoursesPage() {
             instructor: "Роберт Оппенгеймер",
             description: "Цей курс охоплює основи ядерної фізики, включаючи ядерні реакції, радіоактивність та застосування ядерної енергії.",
             syllabus: ["Введення в ядерну фізику", "Ядерні реакції", "Радіоактивність", "Застосування ядерної енергії"],
+            category: "Наука",
         },
     ];
-
 
     // Завантаження стану курсів з localStorage при завантаженні сторінки
     useEffect(() => {
@@ -169,6 +181,26 @@ function CoursesPage() {
         setModalOpen(false);
     };
 
+    // Функція для сортування курсів за тривалістю
+    const sortCoursesByDuration = (courses) => {
+        return courses.sort((a, b) => {
+            const durationA = parseInt(a.duration);
+            const durationB = parseInt(b.duration);
+            return sortByDuration ? durationA - durationB : durationB - durationA;
+        });
+    };
+
+    // Функція для фільтрації курсів за категорією
+    const filterCoursesByCategory = (courses) => {
+        if (selectedCategory === 'all') {
+            return courses;
+        }
+        return courses.filter((course) => course.category === selectedCategory);
+    };
+
+    // Отримуємо унікальні категорії для випадаючого списку
+    const categories = [...new Set(courses.map((course) => course.category))];
+
     // Сортування курсів: спочатку курси, які розпочато або завершено
     const sortedCourses = [...courses].sort((a, b) => {
         const aInProgress = inProgressCourses.includes(a.title);
@@ -181,10 +213,36 @@ function CoursesPage() {
         return 0;
     });
 
+    // Застосовуємо фільтрацію та сортування
+    const filteredAndSortedCourses = sortCoursesByDuration(filterCoursesByCategory(sortedCourses));
+
     return (
         <section className="section-courses">
+            <div className="filters">
+                {/* Випадаючий список для фільтрації за категорією */}
+                <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                    <option value="all">Всі категорії</option>
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                            {category}
+                        </option>
+                    ))}
+                </select>
+
+                {/* Кнопка для сортування за тривалістю */}
+                <button
+                    className="sort-button"
+                    onClick={() => setSortByDuration(!sortByDuration)}
+                >
+                    {sortByDuration ? 'Сортувати за тривалістю (від найкоротших)' : 'Сортувати за тривалістю (від найдовших)'}
+                </button>
+            </div>
+
             <div className="course-grid">
-                {sortedCourses.map((course, index) => {
+                {filteredAndSortedCourses.map((course, index) => {
                     const isInProgress = inProgressCourses.includes(course.title);
                     const isCompleted = completedCourses.includes(course.title);
 

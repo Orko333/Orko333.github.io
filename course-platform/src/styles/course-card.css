@@ -194,3 +194,48 @@
 .cta-button:hover {
     background-color: #ff0000;
 }
+
+/* Стилі для фільтрів */
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.filters select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #000000;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+}
+
+.filters select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Стилі для кнопки сортування */
+.sort-button {
+    padding: 10px 20px;
+    background-color: #0077b6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sort-button:hover {
+    background-color: #023e8a;
+}
+
+.sort-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+}
