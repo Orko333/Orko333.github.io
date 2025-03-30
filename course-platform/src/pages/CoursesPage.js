@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/sections.css'; // Імпортуємо стилі для секцій
-import '../styles/course-card.css'; // Імпортуємо стилі для карток курсів
-import '../styles/modal.css'; // Імпортуємо стилі для модального вікна
+import '../styles/course-card.css';
 
 function CoursesPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [inProgressCourses, setInProgressCourses] = useState([]);
     const [completedCourses, setCompletedCourses] = useState([]);
-    const [sortByDuration, setSortByDuration] = useState(false); // Стан для сортування за тривалістю
-    const [selectedCategory, setSelectedCategory] = useState('all'); // Стан для фільтрації за категорією
+    const [sortOption, setSortOption] = useState('default');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedLevel, setSelectedLevel] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isInitialized, setIsInitialized] = useState(false);
 
     // Дані про курси
     const courses = [
@@ -103,52 +104,55 @@ function CoursesPage() {
             syllabus: ["Основи лідерства", "Стратегічне планування", "Управління командами", "Розв'язання конфліктів"],
             category: "Управління",
         },
-        {
-            title: "Ядерна фізика",
-            level: "Просунутий",
-            duration: "10 тижнів",
-            instructor: "Роберт Оппенгеймер",
-            description: "Цей курс охоплює основи ядерної фізики, включаючи ядерні реакції, радіоактивність та застосування ядерної енергії.",
-            syllabus: ["Введення в ядерну фізику", "Ядерні реакції", "Радіоактивність", "Застосування ядерної енергії"],
-            category: "Наука",
-        },
     ];
 
-    // Завантаження стану курсів з localStorage при завантаженні сторінки
+    // Завантаження даних з localStorage при першому рендері
     useEffect(() => {
-        const savedInProgress = JSON.parse(localStorage.getItem('inProgressCourses')) || [];
-        const savedCompleted = JSON.parse(localStorage.getItem('completedCourses')) || [];
+        console.log('Завантаження даних з localStorage...');
 
-        console.log('Завантаження з localStorage:', { savedInProgress, savedCompleted }); // Логування
+        try {
+            const savedInProgress = localStorage.getItem('inProgressCourses_v2');
+            const savedCompleted = localStorage.getItem('completedCourses_v2');
 
-        // Перевірка, чи дані є масивами
-        if (Array.isArray(savedInProgress)) {
-            setInProgressCourses(savedInProgress);
-        } else {
-            console.error('Дані inProgressCourses не є масивом:', savedInProgress);
-        }
+            console.log('Отримані дані:', { savedInProgress, savedCompleted });
 
-        if (Array.isArray(savedCompleted)) {
-            setCompletedCourses(savedCompleted);
-        } else {
-            console.error('Дані completedCourses не є масивом:', savedCompleted);
+            if (savedInProgress) {
+                const parsed = JSON.parse(savedInProgress);
+                if (Array.isArray(parsed)) {
+                    setInProgressCourses(parsed);
+                }
+            }
+
+            if (savedCompleted) {
+                const parsed = JSON.parse(savedCompleted);
+                if (Array.isArray(parsed)) {
+                    setCompletedCourses(parsed);
+                }
+            }
+        } catch (error) {
+            console.error('Помилка при завантаженні даних:', error);
+        } finally {
+            setIsInitialized(true);
         }
     }, []);
 
-    // Збереження стану курсів у localStorage при зміні
+    // Збереження даних в localStorage при зміні станів
     useEffect(() => {
-        if (inProgressCourses.length > 0 || completedCourses.length > 0) {
-            console.log('Збереження в localStorage:', { inProgressCourses, completedCourses }); // Логування
-            localStorage.setItem('inProgressCourses', JSON.stringify(inProgressCourses));
-            localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
-        }
-    }, [inProgressCourses, completedCourses]);
+        if (!isInitialized) return;
 
-    // Функція для початку курсу
+        console.log('Збереження даних:', { inProgressCourses, completedCourses });
+
+        try {
+            localStorage.setItem('inProgressCourses_v2', JSON.stringify(inProgressCourses));
+            localStorage.setItem('completedCourses_v2', JSON.stringify(completedCourses));
+        } catch (error) {
+            console.error('Помилка при збереженні даних:', error);
+        }
+    }, [inProgressCourses, completedCourses, isInitialized]);
+
     const handleStartCourse = (courseTitle) => {
         if (!inProgressCourses.includes(courseTitle) && !completedCourses.includes(courseTitle)) {
-            const updatedInProgress = [courseTitle, ...inProgressCourses]; // Додаємо курс на початок списку
-            console.log('Розпочато курс:', courseTitle); // Логування
+            const updatedInProgress = [courseTitle, ...inProgressCourses];
             setInProgressCourses(updatedInProgress);
             alert(`Курс "${courseTitle}" розпочато!`);
         } else {
@@ -156,12 +160,10 @@ function CoursesPage() {
         }
     };
 
-    // Функція для завершення курсу
     const handleCompleteCourse = (courseTitle) => {
         if (inProgressCourses.includes(courseTitle)) {
             const updatedInProgress = inProgressCourses.filter((course) => course !== courseTitle);
-            const updatedCompleted = [courseTitle, ...completedCourses]; // Додаємо курс на початок списку
-            console.log('Завершено курс:', courseTitle); // Логування
+            const updatedCompleted = [courseTitle, ...completedCourses];
             setInProgressCourses(updatedInProgress);
             setCompletedCourses(updatedCompleted);
             alert(`Курс "${courseTitle}" завершено!`);
@@ -170,75 +172,135 @@ function CoursesPage() {
         }
     };
 
-    // Функція для відкриття модального вікна
     const openModal = (course) => {
         setSelectedCourse(course);
         setModalOpen(true);
     };
 
-    // Функція для закриття модального вікна
     const closeModal = () => {
         setModalOpen(false);
     };
 
-    // Функція для сортування курсів за тривалістю
-    const sortCoursesByDuration = (courses) => {
-        return courses.sort((a, b) => {
-            const durationA = parseInt(a.duration);
-            const durationB = parseInt(b.duration);
-            return sortByDuration ? durationA - durationB : durationB - durationA;
+    const categories = ['all', ...new Set(courses.map(course => course.category))];
+    const levels = ['all', ...new Set(courses.map(course => course.level))];
+
+    const filterCourses = (courses) => {
+        return courses.filter(course => {
+            const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
+            const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
+            const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                course.description.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCategory && matchesLevel && matchesSearch;
         });
     };
 
-    // Функція для фільтрації курсів за категорією
-    const filterCoursesByCategory = (courses) => {
-        if (selectedCategory === 'all') {
-            return courses;
-        }
-        return courses.filter((course) => course.category === selectedCategory);
+    const sortCourses = (courses) => {
+        return [...courses].sort((a, b) => {
+            const aInProgress = inProgressCourses.includes(a.title);
+            const bInProgress = inProgressCourses.includes(b.title);
+            const aCompleted = completedCourses.includes(a.title);
+            const bCompleted = completedCourses.includes(b.title);
+
+            if (sortOption === 'default') {
+                if (aInProgress && !bInProgress) return -1;
+                if (!aInProgress && bInProgress) return 1;
+                if (aCompleted && !bCompleted) return -1;
+                if (!aCompleted && bCompleted) return 1;
+                return 0;
+            }
+
+            const durationA = parseInt(a.duration);
+            const durationB = parseInt(b.duration);
+
+            switch(sortOption) {
+                case 'longest':
+                    return durationB - durationA;
+                case 'shortest':
+                    return durationA - durationB;
+                case 'medium':
+                    const aIsMedium = durationA >= 6 && durationA <= 8;
+                    const bIsMedium = durationB >= 6 && durationB <= 8;
+                    if (aIsMedium && !bIsMedium) return -1;
+                    if (!aIsMedium && bIsMedium) return 1;
+                    return durationA - durationB;
+                default:
+                    return 0;
+            }
+        });
     };
 
-    // Отримуємо унікальні категорії для випадаючого списку
-    const categories = [...new Set(courses.map((course) => course.category))];
-
-    // Сортування курсів: спочатку курси, які розпочато або завершено
-    const sortedCourses = [...courses].sort((a, b) => {
-        const aInProgress = inProgressCourses.includes(a.title);
-        const bInProgress = inProgressCourses.includes(b.title);
-        const aCompleted = completedCourses.includes(a.title);
-        const bCompleted = completedCourses.includes(b.title);
-
-        if (aInProgress || aCompleted) return -1;
-        if (bInProgress || bCompleted) return 1;
-        return 0;
-    });
-
-    // Застосовуємо фільтрацію та сортування
-    const filteredAndSortedCourses = sortCoursesByDuration(filterCoursesByCategory(sortedCourses));
+    const filteredAndSortedCourses = sortCourses(filterCourses(courses));
 
     return (
         <section className="section-courses">
-            <div className="filters">
-                {/* Випадаючий список для фільтрації за категорією */}
-                <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                    <option value="all">Всі категорії</option>
-                    {categories.map((category, index) => (
-                        <option key={index} value={category}>
-                            {category}
-                        </option>
-                    ))}
-                </select>
+            <div className="filters-container">
+                <div className="search-filter">
+                    <div className="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Пошук курсів..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="search-input"
+                    />
+                </div>
 
-                {/* Кнопка для сортування за тривалістю */}
-                <button
-                    className="sort-button"
-                    onClick={() => setSortByDuration(!sortByDuration)}
-                >
-                    {sortByDuration ? 'Сортувати за тривалістю (від найкоротших)' : 'Сортувати за тривалістю (від найдовших)'}
-                </button>
+                <div className="filter-group">
+                    <div className="select-wrapper">
+                        <select
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            className="filter-select"
+                        >
+                            <option value="all">Всі категорії</option>
+                            {categories.filter(c => c !== 'all').map((category, index) => (
+                                <option key={index} value={category}>{category}</option>
+                            ))}
+                        </select>
+                        <div className="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div className="filter-group">
+                    <div className="select-wrapper">
+                        <select
+                            value={selectedLevel}
+                            onChange={(e) => setSelectedLevel(e.target.value)}
+                            className="filter-select"
+                        >
+                            <option value="all">Всі рівні</option>
+                            {levels.filter(l => l !== 'all').map((level, index) => (
+                                <option key={index} value={level}>{level}</option>
+                            ))}
+                        </select>
+                        <div className="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div className="filter-group">
+                    <div className="select-wrapper">
+                        <select
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                            className="filter-select"
+                        >
+                            <option value="default">За статусом</option>
+                            <option value="longest">Тривалість (довші)</option>
+                            <option value="shortest">Тривалість (коротші)</option>
+                            <option value="medium">Тривалість (середні)</option>
+                        </select>
+                        <div className="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div className="results-counter">
+                    <span>{filteredAndSortedCourses.length}</span> курсів знайдено
+                </div>
             </div>
 
             <div className="course-grid">
@@ -250,52 +312,149 @@ function CoursesPage() {
                         <div
                             className={`course-card ${isInProgress ? 'in-progress' : ''} ${isCompleted ? 'completed' : ''}`}
                             key={index}
+                            data-status={isInProgress ? "В процесі" : isCompleted ? "Завершено" : ""}
                         >
-                            <h3>{course.title}</h3>
-                            <p><strong>Рівень:</strong> {course.level}</p>
-                            <p><strong>Тривалість:</strong> {course.duration}</p>
-                            <p><strong>Викладач:</strong> {course.instructor}</p>
-                            <button
-                                className="start-course"
-                                onClick={() => handleStartCourse(course.title)}
-                                disabled={isInProgress || isCompleted}
-                            >
-                                Розпочати курс
-                            </button>
-                            <button
-                                className="complete-course"
-                                onClick={() => handleCompleteCourse(course.title)}
-                                disabled={!isInProgress || isCompleted}
-                            >
-                                Курс завершено
-                            </button>
-                            <button
-                                className="details-button"
-                                onClick={() => openModal(course)}
-                            >
-                                Детальніше
-                            </button>
+                            <div className="course-card-content">
+                                <div className="course-card-header">
+                                    <h3>{course.title}</h3>
+                                    <span className="course-level-badge">{course.level}</span>
+                                </div>
+                                <div className="course-meta">
+                                    <span className="meta-item">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        {course.duration}
+                                    </span>
+                                    <span className="meta-item">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                        {course.instructor}
+                                    </span>
+                                </div>
+                                <p className="course-description">{course.description}</p>
+
+                                <div className="course-actions">
+                                    <button
+                                        className={`action-button ${isInProgress ? 'in-progress-btn' : isCompleted ? 'completed-btn' : 'start-btn'}`}
+                                        onClick={() => handleStartCourse(course.title)}
+                                        disabled={isInProgress || isCompleted}
+                                    >
+                                        {isInProgress ? (
+                                            <>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                                </svg>
+                                                В процесі
+                                            </>
+                                        ) : isCompleted ? (
+                                            <>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                </svg>
+                                                Завершено
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                                </svg>
+                                                Розпочати
+                                            </>
+                                        )}
+                                    </button>
+                                    <button
+                                        className="details-button"
+                                        onClick={() => openModal(course)}
+                                    >
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                        Деталі
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     );
                 })}
             </div>
 
-            {/* Модальне вікно для деталей курсу */}
-            {modalOpen && (
-                <div className="modal" style={{ display: 'flex' }}>
-                    <div className="modal-content">
-                        <span className="close-modal" onClick={closeModal}>&times;</span>
-                        <h3>{selectedCourse.title}</h3>
-                        <p>{selectedCourse.description}</p>
-                        <p><strong>Рівень:</strong> {selectedCourse.level}</p>
-                        <p><strong>Тривалість:</strong> {selectedCourse.duration}</p>
-                        <p><strong>Викладач:</strong> {selectedCourse.instructor}</p>
-                        <p><strong>Програма курсу:</strong></p>
-                        <ul>
-                            {selectedCourse.syllabus.map((item, index) => (
-                                <li key={index}>{item}</li>
-                            ))}
-                        </ul>
+            {modalOpen && selectedCourse && (
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <button className="close-modal" onClick={closeModal}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+
+                        <div className="modal-header">
+                            <h3>{selectedCourse.title}</h3>
+                            <div className="modal-meta">
+                                <span className="meta-badge">{selectedCourse.category}</span>
+                                <span className="meta-badge level">{selectedCourse.level}</span>
+                                <span className="meta-badge duration">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    {selectedCourse.duration}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="modal-body">
+                            <p><strong>Викладач:</strong> {selectedCourse.instructor}</p>
+                            <p className="modal-description">{selectedCourse.description}</p>
+
+                            <div className="syllabus-section">
+                                <h4>Програма курсу:</h4>
+                                <ul>
+                                    {selectedCourse.syllabus.map((item, index) => (
+                                        <li key={index}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                            </svg>
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="modal-actions">
+                            {!inProgressCourses.includes(selectedCourse.title) && !completedCourses.includes(selectedCourse.title) && (
+                                <button
+                                    className="start-course"
+                                    onClick={() => {
+                                        handleStartCourse(selectedCourse.title);
+                                        closeModal();
+                                    }}
+                                >
+                                    Розпочати курс
+                                </button>
+                            )}
+                            {inProgressCourses.includes(selectedCourse.title) && !completedCourses.includes(selectedCourse.title) && (
+                                <button
+                                    className="complete-course"
+                                    onClick={() => {
+                                        handleCompleteCourse(selectedCourse.title);
+                                        closeModal();
+                                    }}
+                                >
+                                    Завершити курс
+                                </button>
+                            )}
+                            <button className="close-button" onClick={closeModal}>Закрити</button>
+                        </div>
                     </div>
                 </div>
             )}

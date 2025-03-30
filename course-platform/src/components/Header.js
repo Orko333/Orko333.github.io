@@ -1,59 +1,143 @@
-import React from 'react';
-import '../styles/header.css'; // Імпортуємо стилі для хедера
-
-// Імпортуємо Font Awesome
+// Header.js
+import React, { useState, useEffect } from 'react';
+import '../styles/header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGraduationCap, faCalendarAlt, faUserCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { faInstagram, faFacebook, faTiktok, faTelegram } from '@fortawesome/free-brands-svg-icons';
+import {
+    faGraduationCap as faGraduationCapSolid,
+    faCalendarAlt as faCalendarAltSolid,
+    faUserCircle as faUserCircleSolid,
+    faInfoCircle as faInfoCircleSolid,
+    faSignInAlt
+} from '@fortawesome/free-solid-svg-icons';
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import AuthModal from './AuthModal';
 
 function Header() {
+    const [scrolled, setScrolled] = useState(false);
+    const [activeNav, setActiveNav] = useState(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener('scroll', handleScroll);
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            unsubscribe();
+        };
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Помилка при виході:', error);
+        }
+    };
+
     return (
-        <header>
-            <div className="container">
-                <a href="/" className="logo-link">
-                    <img src="/images/logo.png" alt="Логотип" className="logo" />
-                </a>
-                <h1>SkillHub</h1>
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="/courses">
-                                <FontAwesomeIcon icon={faGraduationCap} className="nav-icon" /> {/* Іконка для курсів */}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/schedule">
-                                <FontAwesomeIcon icon={faCalendarAlt} className="nav-icon" /> {/* Іконка для розкладу */}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/account">
-                                <FontAwesomeIcon icon={faUserCircle} className="nav-icon" /> {/* Іконка для кабінету */}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/about">
-                                <FontAwesomeIcon icon={faInfoCircle} className="nav-icon" /> {/* Іконка для "Про нас" */}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <div className="social-icons">
-                    <a className="social-link1" href="https://www.instagram.com/tipa_orko_/" target="_blank" rel="noopener noreferrer">
-                        <FontAwesomeIcon icon={faInstagram} className="social-icon" /> {/* Іконка Instagram */}
-                    </a>
-                    <a className="social-link2" href="https://www.facebook.com/zelenskyy.official/?locale=uk_UA" target="_blank" rel="noopener noreferrer">
-                        <FontAwesomeIcon icon={faFacebook} className="social-icon" /> {/* Іконка Facebook */}
-                    </a>
-                    <a className="social-link3" href="https://vm.tiktok.com/ZMBrTN3Gg/" target="_blank" rel="noopener noreferrer">
-                        <FontAwesomeIcon icon={faTiktok} className="social-icon" /> {/* Іконка TikTok */}
-                    </a>
-                    <a className="social-link4" href="https://t.me/Orko223" target="_blank" rel="noopener noreferrer">
-                        <FontAwesomeIcon icon={faTelegram} className="social-icon" /> {/* Іконка Telegram */}
-                    </a>
+        <>
+            <header className={`glass-header ${scrolled ? 'scrolled' : ''}`}>
+                <div className="header-container">
+                    <div className="logo-title-wrapper">
+                        <a href="/" className="logo-link">
+                            <div className="logo-shine"></div>
+                            <img src="/images/logo.png" alt="SkillHub" className="logo" />
+                        </a>
+
+                        <a href="/" className="site-title">
+                            <h1>
+                                <span className="title-gradient">Skill</span>
+                                <span className="title-outline">Hub</span>
+                            </h1>
+                            <span className="title-subtext">Premium Learning</span>
+                        </a>
+                    </div>
+
+                    <nav>
+                        <ul>
+                            {[
+                                { icon: faGraduationCapSolid, text: 'Курси', link: '/courses' },
+                                { icon: faCalendarAltSolid, text: 'Розклад', link: '/schedule' },
+                                { icon: faUserCircleSolid, text: 'Кабінет', link: '/account' },
+                                { icon: faInfoCircleSolid, text: 'Про нас', link: '/about' }
+                            ].map((item, index) => (
+                                <li key={index}>
+                                    <a
+                                        href={item.link}
+                                        className={`nav-link ${activeNav === index ? 'active' : ''}`}
+                                        onMouseEnter={() => setActiveNav(index)}
+                                        onMouseLeave={() => setActiveNav(null)}
+                                    >
+                                        <span className="nav-decorator"></span>
+                                        <span className="nav-icon-wrapper">
+                                            <FontAwesomeIcon icon={item.icon} />
+                                        </span>
+                                        <span className="nav-text">{item.text}</span>
+                                    </a>
+                                </li>
+                            ))}
+
+                            <li>
+                                {user ? (
+                                    <a
+                                        href="#logout"
+                                        className="nav-link"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleLogout();
+                                        }}
+                                        onMouseEnter={() => setActiveNav(4)}
+                                        onMouseLeave={() => setActiveNav(null)}
+                                    >
+                                        <span className="nav-decorator"></span>
+                                        <span className="nav-icon-wrapper">
+                                            <FontAwesomeIcon icon={faUserCircleSolid} />
+                                        </span>
+                                        <span className="nav-text">Вийти</span>
+                                    </a>
+                                ) : (
+                                    <a
+                                        href="#login"
+                                        className={`nav-link ${activeNav === 4 ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setShowAuthModal(true);
+                                        }}
+                                        onMouseEnter={() => setActiveNav(4)}
+                                        onMouseLeave={() => setActiveNav(null)}
+                                    >
+                                        <span className="nav-decorator"></span>
+                                        <span className="nav-icon-wrapper">
+                                            <FontAwesomeIcon icon={faSignInAlt} />
+                                        </span>
+                                        <span className="nav-text">Увійти</span>
+                                    </a>
+                                )}
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-            </div>
-        </header>
+
+                <div className="header-light"></div>
+                <div className="header-particles"></div>
+            </header>
+            <div className="header-spacer"></div>
+
+            <AuthModal
+                show={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onAuthSuccess={() => setShowAuthModal(false)}
+            />
+        </>
     );
 }
 

@@ -1,15 +1,31 @@
-/* Основні стилі */
+/* base.css */
+:root {
+    --primary: #2563EB;
+    --primary-dark: #1D4ED8;
+    --secondary: #EC4899;
+    --dark: #111827;
+    --darker: #0A0A12;
+    --light: #ffffff;
+    --gray: #6B7280;
+    --glass: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #ffffff;
-    color: #000000;
+    background-color: var(--light);
+    color: var(--dark);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 .container {
     width: 90%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 20px;
 }
+
